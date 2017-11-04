@@ -64,10 +64,10 @@ def concat_missing(todo, data_path, save_name):
     final_df.to_csv(save_name, sep=',', index=False)
 
 # Concat newly acquired data
-# concat_missing(todo_nodes, data_path, 'LMPnodes_all_features.csv')
+concat_missing(todo_nodes, data_path, 'LMPnodes_concat.csv')
 
 # Open main file
-LMP_nodes = pd.read_csv('LMPnodes_all_features.csv', sep=',')
+LMP_nodes = pd.read_csv('LMPnodes_concat.csv', sep=',')
 LMP_nodes.columns =  ['grp', 'grp_type', 'time', 'lmp_type', 'market_id', 
     'price_per_mw', 'node_id', 'node_id2', 'node_id_xml', 'opr_dt', 'opr_hr', 
     'opr_interval', 'pnode_resmrid', 'pos', 'unnamed', 'xml_data_item']
@@ -109,4 +109,4 @@ LMP_nodes = LMP_nodes[['year', 'month', 'date', 'day', 'opr_hr', 'node_id',
     'market_id', 'price_per_mw', 'fuel_name', 'fuel_gen_MW', 'load_MW', 
     'net_exp_MW', 'latitude', 'longitude']]
 
-LMP_nodes.to_csv('LMP_data', sep=',', index=False)
+LMP_nodes.to_csv('LMP_data.csv', sep=',', index=False)
