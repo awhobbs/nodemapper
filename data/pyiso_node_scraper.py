@@ -13,8 +13,8 @@ path=os.getcwd()
 
 caiso = CAISOClient()
 
-starttime = caiso.utcify('2017-11-01 00:00')
-endtime = caiso.utcify('2017-11-01 23:00')
+starttime = caiso.utcify('2017-10-01 00:00')
+endtime = caiso.utcify('2017-10-31 23:00')
 now = caiso.utcify(datetime.utcnow(), tz_name='utc')
 
 options = {
@@ -36,7 +36,7 @@ node_names = LMP_locs['node_id'].unique()
 # # Demand Forecast
 time1 = timeit.time()
 
-node_id = node_names[100]
+node_id = node_names[0]
 
 lmp = caiso.get_lmp_as_dataframe(node_id, False, starttime, endtime)
 lmp.to_csv(path+'/node_LMP/'+ lmp['PNODE_RESMRID'][0]+'.csv', sep=',', index=False)
