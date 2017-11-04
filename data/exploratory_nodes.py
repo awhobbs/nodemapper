@@ -88,6 +88,7 @@ LMP_nodes['day'] = LMP_nodes['day'].replace(['07', '14', '21', '28'], '6')
 
 
 from datetime import datetime
+
 # Locations, fuel, trade, load to merge to main
 fuel = pd.read_csv('fuel.csv', sep=',')
 fuel['timestamp'] = pd.to_datetime(fuel['timestamp'])   
@@ -105,8 +106,32 @@ LMP_nodes = LMP_nodes.merge(trade[['timestamp', 'net_exp_MW']], how='left', left
 locs = pd.read_csv('LMP_locs.csv', sep=',')
 LMP_nodes = LMP_nodes.merge(locs, how='left', on='node_id')
 
+# Drop unneeded features
 LMP_nodes = LMP_nodes[['year', 'month', 'date', 'day', 'opr_hr', 'node_id',
     'market_id', 'price_per_mw', 'fuel_name', 'fuel_gen_MW', 'load_MW', 
     'net_exp_MW', 'latitude', 'longitude']]
-
+    
+# Save it!
 LMP_nodes.to_csv('LMP_data.csv', sep=',', index=False)
+
+# Reopen and set the feature types for computing efficiency
+import numpy as np
+
+LMP_nodes = pd.read_csv('LMP_data.csv', dtype={
+    # Date numerals have no value significance
+    # Maybe should be 'category' instead of ints 
+    'year': np.uint8,  
+    'month': np.uint8, 
+    'date': np.uint8, 
+    'day': np.uint8, 
+    'opr_hr': np.uint8, 
+    'node_id': 'category', 
+    'market_id': 'category', 
+    'price_per_mw': np.float32,
+    'fuel_name': 'category', 
+    'fuel_gen_MW': np.float32,
+    'load_MW': np.float32,
+    'net_exp_MW': np.float32,
+    'latitude': np.float32,
+    'longitude': np.float32
+    })
