@@ -29,7 +29,6 @@ def get_csv_names(folder):
     return csv_names
     
     
-
 csv_names = get_csv_names(data_path)
 
 import pandas as pd 
@@ -73,6 +72,7 @@ LMP_nodes.columns =  ['grp', 'grp_type', 'time', 'lmp_type', 'market_id',
     'price_per_mw', 'node_id', 'node_id2', 'node_id_xml', 'opr_dt', 'opr_hr', 
     'opr_interval', 'pnode_resmrid', 'pos', 'unnamed', 'xml_data_item']
 
+LMP_nodes['time'] = pd.to_datetime(LMP_nodes['time'])
 LMP_nodes['year'], LMP_nodes['month'], LMP_nodes['date'] =                  \
     LMP_nodes['opr_dt'].str.split('-', 2).str
     
@@ -87,5 +87,26 @@ LMP_nodes['day'] = LMP_nodes['day'].replace(['06', '13', '20', '27'], '5')
 LMP_nodes['day'] = LMP_nodes['day'].replace(['07', '14', '21', '28'], '6')
 
 
-LMP_nodes = LMP_nodes[['year', 'month', 'date', 'day', 'opr_hr', 'node_id', 
-    'market_id', 'price_per_mw']]
+from datetime import datetime
+# Locations, fuel, trade, load to merge to main
+fuel = pd.read_csv('fuel.csv', sep=',')
+fuel['timestamp'] = pd.to_datetime(fuel['timestamp'])   
+LMP_nodes = LMP_nodes.merge(fuel[['timestamp', 'fuel_name', 'gen_MW']], how='left', left_on='time', right_on='timestamp')
+LMP_nodes = LMP_nodes.rename(columns = {'gen_MW':'fuel_gen_MW'})
+
+load = pd.read_csv('load.csv', sep=',')
+load['timestamp'] = pd.to_datetime(load['timestamp'])   
+LMP_nodes = LMP_nodes.merge(load[['timestamp', 'load_MW']], how='left', left_on='time', right_on='timestamp')
+
+trade = pd.read_csv('trade.csv', sep=',')
+trade['timestamp'] = pd.to_datetime(trade['timestamp'])   
+LMP_nodes = LMP_nodes.merge(trade[['timestamp', 'net_exp_MW']], how='left', left_on='time', right_on='timestamp')
+    
+locs = pd.read_csv('LMP_locs.csv', sep=',')
+LMP_nodes = LMP_nodes.merge(locs, how='left', on='node_id')
+
+LMP_nodes = LMP_nodes[['year', 'month', 'date', 'day', 'opr_hr', 'node_id',
+    'market_id', 'price_per_mw', 'fuel_name', 'fuel_gen_MW', 'load_MW', 
+    'net_exp_MW', 'latitude', 'longitude']]
+
+LMP_nodes.to_csv('LMP_data', sep=',', index=False)
