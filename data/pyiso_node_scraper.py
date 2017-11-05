@@ -47,7 +47,7 @@ node_names = list(LMP_locs['node_id'].unique())
 
 # LMP DAMs
 num_nodes = len(node_names)
-for node_id in node_names[135:]: # Change start index if time out
+for node_id in node_names[227:]: # Change start index if time out
     print(num_nodes-node_names.index(node_id), 'nodes left')
     lmp = caiso_data.get_lmp_as_dataframe(node_id, False, starttime, endtime, freq='1hr', market='DAM', market_run_id='DAM')
     lmp.to_csv(path+'/node_LMP/'+ lmp['PNODE_RESMRID'][0]+'.csv', sep=',', index=False)
