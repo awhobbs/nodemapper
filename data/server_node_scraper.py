@@ -11,7 +11,7 @@ import pickle
 import datetime
 import logging
 import pandas as pd
-from pyiso import caiso
+import mycaiso
 
 # set up logging
 logging.basicConfig(filename='caiso_parser.log', level=logging.DEBUG)
@@ -20,7 +20,7 @@ pd.set_option('display.max_columns', 0)
 
 path = os.getcwd()
 
-caiso_data = caiso.CAISOClient()
+caiso_data = mycaiso.CAISOClient()
 caiso_data.timeout_seconds = 240
 
 caiso_data.handle_options(freq='1hr', market='DAM')
